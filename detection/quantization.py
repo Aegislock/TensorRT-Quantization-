@@ -6,17 +6,28 @@ import glob,os,cv2
 
 BATCH_SIZE = 16
 BATCH = 100
-height = 640
-width = 640
+height = 416
+width = 416
 CALIB_IMG_DIR = './calibration/'
-onnx_model_path = './yolox_s.onnx'
+onnx_model_path = './armor_tiny.onnx'
 
-def preprocess(img):
-    img = cv2.resize(img, (height, width))
-    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-    img = img.transpose((2, 0, 1)).astype(np.float32)
-    img /= 255.0
-    return img
+def preprocess(img, width=416, height=416):
+    img_h, img_w = img.shape[:2]
+
+    canvas = np.full((height, width, 3), 114, dtype=np.uint8)
+    ratio = min(width / img_w, height / img_h)
+
+    new_w, new_h = int(img_w * ratio), int(img_h * ratio)
+    new_img = cv2.resize(img, (new_w, new_h))
+    new_img = cv2.cvtColor(new_img, cv2.COLOR_BGR2RGB)
+
+    canvas[0:new_h, 0:new_w, :] = new_img
+    canvas = canvas.transpose((2, 0, 1)).astype(np.float32)
+    # canvas /= 255.0  # Uncomment if model expects 0-1 input
+
+    canvas = np.expand_dims(canvas, 0)
+
+    return canvas
 
 class DataLoader:
     def __init__(self):
