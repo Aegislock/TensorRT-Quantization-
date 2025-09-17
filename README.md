@@ -1,5 +1,5 @@
 # Tensorrt-int8-quantization-pipline
-a simple pipline of int8 quantization based on tensorrt.  
+a simple pipline of int8 quantization based on tensorrt. adapted from xuanandsix
 [classification](#classification) [detection](#detection)
 
 ## Example for classification <a name="classification"></a>
